@@ -1,0 +1,8 @@
+[package]
+name = "sqlite-clone"
+version = "0.1.0"
+authors = ["kperursa <kperursa@cisco.com>"]
+edition = "2018"
+
+[dependencies]
+scan_fmt = "0.1.3"
