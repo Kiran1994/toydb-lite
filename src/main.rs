@@ -7,9 +7,15 @@ use frontend::command_processor::meta_command_processor::MetaCommandExecutionRes
 use frontend::command_processor::sql_command_processor::Executable;
 use frontend::command_processor::sql_command_processor::Statement;
 use frontend::command_processor::sql_command_processor::SQLCommandExecutionResult;
-use frontend::command_processor::table::Table;
 
-#[macro_use] extern crate scan_fmt;
+mod data_structures;
+use data_structures::table::Table;
+
+mod backend;
+
+#[macro_use]
+extern crate scan_fmt;
+extern crate serde_json;
 
 fn read_input() -> Result<String, io::Error> {
     let mut input = String::new();

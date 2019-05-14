@@ -1,5 +1,5 @@
-use super::table::Row;
-use super::table::Table;
+use crate::data_structures::row::Row;
+use crate::data_structures::table::Table;
 
 pub enum SQLCommandExecutionResult {
     SUCCESS,
@@ -43,8 +43,11 @@ fn derive_statement_type(command: &str) -> StatementType {
 }
 
 fn insert_row(table: &mut Table, row: &Row) {
-    table.add_row(row);
-    table.print();
+    table.add_row(&row.id, row);
+}
+
+fn select(table: &mut Table, id: &String) {
+    table.select_row(id);
 }
 
 impl Executable for Statement {
@@ -53,7 +56,7 @@ impl Executable for Statement {
             StatementType::INSERT => {
                 self.statement_type = StatementType::INSERT;
                 let (id, name, email) = scan_fmt!(command, "insert {} {} {}", String, String, String);
-
+                //TODO: do error handling for invalid command syntax
                 self.row.set_id(&id.unwrap());
                 self.row.set_name(&name.unwrap());
                 self.row.set_email(&email.unwrap());
@@ -62,6 +65,9 @@ impl Executable for Statement {
             },
             StatementType::SELECT => {
                 self.statement_type = StatementType::SELECT;
+                let id = scan_fmt!(command, "select {}", String);
+                self.row.set_id(&id.unwrap());
+
                 return SQLCommandExecutionResult::SUCCESS;
             },
             StatementType::UNRECOGNIZED => return SQLCommandExecutionResult::UNRECOGNIZED
@@ -71,7 +77,7 @@ impl Executable for Statement {
     fn execute(&self, table: &mut Table) {
         match self.statement_type {
             StatementType::INSERT => insert_row(table, &self.row),
-            StatementType::SELECT => println!("Selecting data"),
+            StatementType::SELECT => select(table, &self.row.id),
             StatementType::UNRECOGNIZED => panic!("tried to execute unrecognized statement")
         }
     }
